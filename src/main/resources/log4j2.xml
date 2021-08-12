@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    status="warn" 表示日志框架本身的输出日志级别。
+    monitorInterval="5" 表示自动刷新配置的间隔时间，单位是秒。
+-->
+<Configuration status="warn" monitorInterval="5">
+    <!--  集中配置属性进行管理  -->
+    <!--  使用时通过:${propertyName}  -->
+    <properties>
+        <property name="LOG_HOME">./logs</property>
+    </properties>
+
+    <!--  日志处理器  -->
+    <Appenders>
+        <!--ConsoleAppender的内部类Target是一个枚举对象，有两项枚举值SYSTEM_OUT，SYSTEM_ERR-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] [%-5level] %c{36}:%L --- %m%n"/>
+        </Console>
+        <!--    文件输出类型的appender    -->
+        <File name="file" fileName="${LOG_HOME}/myfile.log">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %c{36} - %m%n"/>
+        </File>
+        <!--    随机读写流的文件输出类型的appender，性能得到了提高    -->
+        <RandomAccessFile name="accessFile" fileName="${LOG_HOME}/myAcclog.log">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %c{36} - %m%n"/>
+        </RandomAccessFile>
+        <!--    按照一定的规则拆分日志文件的appender    -->
+        <!--    这里的filePattern的值代表以天为单位生成文件夹以及按分钟为单位生成日志文件    -->
+        <RollingFile name="rollingFile" fileName="${LOG_HOME}/myrollog.log"
+                     filePattern="./logs/$${date:yyyy-MM-dd}/myrollog-%d{yyyyMM-dd-HH-mm}-%i.log">
+            <!--     日志级别过滤器     -->
+            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!--    日志消息格式    -->
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %c{36} - %msg%n"/>
+            <!--    策略    -->
+            <Policies>
+                <!--        系统启动时，触发拆分规则，生成一个新的日志文件        -->
+                <OnStartupTriggeringPolicy/>
+                <!--        按照文件大小进行拆分        -->
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <!--        按照时间节点进行拆分，拆分规则在filePattern里定义        -->
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <!--    在同一个目录下，文件的个数限定，如果超过，那么新的日志会根据时间覆盖旧的日志        -->
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <!--    配置rootLogger   -->
+        <Root level="trace">
+            <!--    指定日志使用的输出处理器   -->
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
