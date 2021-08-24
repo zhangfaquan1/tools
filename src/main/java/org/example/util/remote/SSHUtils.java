@@ -3,7 +3,7 @@ package org.example.util.remote;
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
 import ch.ethz.ssh2.Session;
-import exception.ParameterException;
+import org.example.exception.ParameterException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,7 @@
-package org.example.util;
+package org.example.util.file;
 
 import org.apache.commons.lang3.StringUtils;
+import org.example.util.RegularMatchingUtils;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.*;

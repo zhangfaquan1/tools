@@ -1,4 +1,4 @@
-package exception;
+package org.example.exception;
 
 /**
  * @descriptions: 参数异常
