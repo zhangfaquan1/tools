@@ -4,6 +4,7 @@
 # idea
 .idea
 tools.iml
+target
 
 # Log file
 *.log
