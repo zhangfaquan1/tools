@@ -1,7 +1,9 @@
-package org.example.util.file;
+package org.example.util.io;
 
 import org.apache.commons.lang3.StringUtils;
 import org.example.util.RegularMatchingUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.*;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
  * @version: 1.0
  */
 public class FileUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
     public static InputStream getFileStream(String filePath) throws FileNotFoundException {
         if (StringUtils.isBlank(filePath))
@@ -202,6 +206,21 @@ public class FileUtils {
             return false;
         treeWalk(file, File::delete);
         return file.delete();
+    }
+
+    public static boolean mkdirs(String filePath) {
+        return mkdirs(filePath);
+    }
+
+    public static boolean mkdirs(File file) {
+        boolean isSuccessMk = true;
+        try {
+            file.mkdirs();
+        } catch (Exception e) {
+            isSuccessMk = false;
+            logger.error("递归创建目录失败。路径：{}", file.getParent(), e);
+        }
+        return isSuccessMk;
     }
 
     public static String getFileHeader(String filePath) {

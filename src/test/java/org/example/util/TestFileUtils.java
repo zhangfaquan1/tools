@@ -1,6 +1,6 @@
 package org.example.util;
 
-import org.example.util.file.FileUtils;
+import org.example.util.io.FileUtils;
 import org.junit.Test;
 
 import java.io.File;

@@ -1,8 +1,8 @@
-package org.example.util.zip;
+package org.example.util.compress;
 
 import org.junit.Test;
 
-public class GzipStrategy {
+public class TestGzipStrategy {
 
     @Test
     public void test() {

@@ -1,16 +1,15 @@
-package org.example.util.zip;
+package org.example.util.compress;
 
 import org.apache.commons.compress.archivers.zip.*;
 import org.junit.Test;
 
 import java.io.*;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 
-public class ZipStrategy {
+public class TestZipStrategy {
 
     // 解压指定文件 - 随机
     @Test

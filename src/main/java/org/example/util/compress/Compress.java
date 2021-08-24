@@ -1,4 +1,4 @@
-package org.example.util.zip;
+package org.example.util.compress;
 
 import java.io.File;
 

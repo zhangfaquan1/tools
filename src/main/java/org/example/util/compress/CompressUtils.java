@@ -1,6 +1,6 @@
-package org.example.util.zip;
+package org.example.util.compress;
 
-import org.example.util.file.FileUtils;
+import org.example.util.io.FileUtils;
 
 import java.io.File;
 
