@@ -22,13 +22,6 @@ public class FileUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
-    public static InputStream getFileStream(String filePath) throws FileNotFoundException {
-        if (StringUtils.isBlank(filePath))
-            return null;
-        File file = new File(filePath);
-        return new FileInputStream(file);
-    }
-
     /**
      * @descriptions 判断文件路径是否为绝对路径，true-绝对路径，false-相对路径
      * @author zhangfaquan
@@ -48,6 +41,8 @@ public class FileUtils {
      * @return boolean
      */
     public static boolean isAbsolutePath(String filePath) {
+        if (StringUtils.isBlank(filePath))
+            return false;
         filePath = StringUtils.strip(filePath);
         return RegularMatchingUtils.matcherWindowsDriveLetter(filePath) || filePath.startsWith("/");
     }
@@ -221,6 +216,20 @@ public class FileUtils {
             logger.error("递归创建目录失败。路径：{}", file.getParent(), e);
         }
         return isSuccessMk;
+    }
+
+    public static void getRelativePath(String referencePath, String comparisonPath) {
+        getRelativePathByAbsolutePath(referencePath, comparisonPath);
+    }
+
+    public static String getRelativePathByAbsolutePath(String referencePath, String comparisonPath) {
+        if (!isAbsolutePath(referencePath) || !isAbsolutePath(comparisonPath))
+            return null;
+        comparisonPath = FileUtils.getFilePath(comparisonPath);
+        referencePath = FileUtils.getFilePath(referencePath);
+        String[] comparisonPathPart = StringUtils.split(comparisonPath, "/");
+        String[] referencePathPart = StringUtils.split(referencePath, "/");
+        return Arrays.stream(comparisonPathPart).skip(referencePathPart.length-1).collect(Collectors.joining("/"));
     }
 
     public static String getFileHeader(String filePath) {

@@ -10,6 +10,7 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DatumWriter;
 import org.example.util.io.FileUtils;
+import org.example.util.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +66,8 @@ public class AvroUtils {
         return avroList.isEmpty() ? null : avroList;
     }
 
-    public static InputStream getSchemaFromFile(String filePath) throws FileNotFoundException {
-        return FileUtils.getFileStream(filePath);
+    public static InputStream getSchemaFromFile(String filePath) {
+        return IOUtils.getFileInputStream(filePath);
     }
 
     public static Schema parseSchema(String schemaStr) {

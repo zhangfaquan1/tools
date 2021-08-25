@@ -49,8 +49,17 @@ public class TestFileUtils {
     }
 
     @Test
-    public void test4() {
+    public void testDeleteFile() {
         boolean b = FileUtils.deleteFile("G:\\a");
         System.out.println(b);
+    }
+
+    @Test
+    public void testGetRelativePathByAbsolutePath() {
+        String relativePathByAbsolutePath = FileUtils.getRelativePathByAbsolutePath("E:\\a\\b\\c", "E:\\a\\b\\c\\d\\v\\b\\q");
+        System.out.println(relativePathByAbsolutePath);
+
+        String relativePathByAbsolutePath2 = FileUtils.getRelativePathByAbsolutePath("E:\\a\\b\\c", "E:\\a\\b\\c");
+        System.out.println(relativePathByAbsolutePath2);
     }
 }
