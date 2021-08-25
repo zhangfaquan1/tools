@@ -1,10 +1,10 @@
 package org.example.constant;
 
-public enum  ZipStrategyEnum {
+public enum  CompressStrategyEnum {
 
-    GZ("");
+    GZIP("");
 
-    ZipStrategyEnum(String type) {
+    CompressStrategyEnum(String type) {
         this.type = type;
     }
 

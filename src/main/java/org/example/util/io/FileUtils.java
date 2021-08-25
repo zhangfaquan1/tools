@@ -46,6 +46,7 @@ public class FileUtils {
         filePath = StringUtils.strip(filePath);
         return RegularMatchingUtils.matcherWindowsDriveLetter(filePath) || filePath.startsWith("/");
     }
+
     /**
      * For example:
      *     "d:\\  asssd\\   csssa   ", "ss\\    ", "\\eee"        -> "d:/asssd/csssa/ss/eee"

@@ -1,15 +1,10 @@
 package org.example.util.compress;
 
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.example.util.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
 import java.util.zip.GZIPOutputStream;
 
 public class GzipStrategy implements Compress {
@@ -18,22 +13,26 @@ public class GzipStrategy implements Compress {
 
     @Override
     public boolean compress(File source, String destPath, boolean strictMode) {
-        TarArchiveOutputStream tarOs = null;
+        GZIPOutputStream gos = null;
+        InputStream tarInputStream = null;
+        boolean isCompress = false;
+        String tarFile = source.getName() + ".tar";
         try {
             // 创建一个 FileOutputStream 到输出文件（.tar.gz）
-            FileOutputStream fos = new FileOutputStream(destPath);
-            // 创建一个 GZIPOutputStream，用来包装 FileOutputStream 对象
-            GZIPOutputStream gos = new GZIPOutputStream(fos);
-            // 创建一个 TarArchiveOutputStream，用来包装 GZIPOutputStream 对象
-            tarOs = new TarArchiveOutputStream(gos);
+            FileOutputStream fileOutputStream = new FileOutputStream(destPath);
+            gos = new GZIPOutputStream(new BufferedOutputStream(fileOutputStream));
+            TarStrategy tarStrategy = new TarStrategy();
+            if (!tarStrategy.compress(source, tarFile, strictMode))
+                return false;
+
+            tarInputStream = IOUtils.getBufferedInputStream(tarFile);
+            isCompress = IOUtils.copyFile(tarInputStream, gos);
         } catch (IOException e) {
-            logger.error("Generation of .tar.gz format file failed", e);
+            logger.error("gzip方式压缩失败。", e);
+        } finally {
+            IOUtils.closeInputStream(tarInputStream);
+            IOUtils.closeOutputStream(gos);
         }
-
-        TarStrategy tarStrategy = new TarStrategy();
-        List<Boolean> results = new ArrayList<>();
-        tarStrategy.compress(tarOs, source, results);
-
-        return strictMode ? results.stream().noneMatch(aBoolean -> aBoolean == null || !aBoolean) : results.stream().anyMatch(aBoolean -> aBoolean != null && aBoolean);
+        return isCompress;
     }
 }

@@ -3,6 +3,7 @@ package org.example.util.compress;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.example.util.factory.ReflectFactory;
 import org.example.util.io.FileUtils;
 import org.example.util.io.IOUtils;
 import org.junit.Test;
@@ -110,10 +111,9 @@ public class TestTarStrategy {
 
     @Test
     public void testCompress() {
-        TarStrategy tarStrategy = new TarStrategy();
-        File file = new File("E:\\Work\\test1");
-        boolean compress = tarStrategy.compress(file, "E:\\Work\\test2.tar", true);
+        TarStrategy tarStrategy = ReflectFactory.getInstance("org.example.util.compress.TarStrategy", TarStrategy.class);
+        File file = new File("E:\\Work\\bct");
+        boolean compress = tarStrategy.compress(file, "test2.tar", true);
         System.out.println(compress);
     }
-
 }

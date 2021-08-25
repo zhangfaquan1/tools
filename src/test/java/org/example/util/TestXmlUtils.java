@@ -5,6 +5,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.example.util.parse.XmlUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

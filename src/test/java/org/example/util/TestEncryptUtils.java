@@ -1,5 +1,6 @@
 package org.example.util;
 
+import org.example.util.encrypt.EncryptUtils;
 import org.junit.Test;
 
 import java.util.Map;

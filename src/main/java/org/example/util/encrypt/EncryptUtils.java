@@ -1,4 +1,4 @@
-package org.example.util;
+package org.example.util.encrypt;
 
 
 import org.apache.commons.codec.binary.Base64;

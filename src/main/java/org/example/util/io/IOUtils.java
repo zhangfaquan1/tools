@@ -113,6 +113,7 @@ public class IOUtils {
             while ((len = inputStream.read(bytes)) != -1) {
                 outputStream.write(bytes, 0, len);
             }
+            outputStream.flush();
             flag = true;
         } catch (IOException e) {
             logger.error("拷贝文件时出现异常。", e);
@@ -134,6 +135,7 @@ public class IOUtils {
             while ((len = reader.read(c)) != -1) {
                 writer.write(c, 0, len);
             }
+            writer.flush();
             flag = true;
         } catch (IOException e) {
             logger.error("拷贝文件时出现异常。", e);
@@ -164,6 +166,10 @@ public class IOUtils {
         return fileInputStream;
     }
 
+    public static BufferedOutputStream getBufferedOutputStream(String filePath) {
+        return getBufferedOutputStream(new File(filePath));
+    }
+
     public static BufferedOutputStream getBufferedOutputStream(File file) {
         BufferedOutputStream bufferedOutputStream = null;
         try {
@@ -172,6 +178,10 @@ public class IOUtils {
             logger.error("指定的目标路径非法。", e);
         }
         return bufferedOutputStream;
+    }
+
+    public static BufferedInputStream getBufferedInputStream(String filePath) {
+        return getBufferedInputStream(new File(filePath));
     }
 
     public static BufferedInputStream getBufferedInputStream(File file) {

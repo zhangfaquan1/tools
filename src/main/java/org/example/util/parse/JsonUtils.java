@@ -1,4 +1,4 @@
-package org.example.util;
+package org.example.util.parse;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
