@@ -3,7 +3,6 @@ package org.example.util.compress;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
-import org.example.util.io.FileUtils;
 import org.junit.Test;
 
 import java.io.*;
@@ -14,9 +13,8 @@ public class TestGzipStrategy {
     @Test
     public void testCompress() {
         GzipStrategy gzipStrategy = new GzipStrategy();
-        boolean compress = gzipStrategy.compress(new File("E:\\Work\\bct"), "bct.tar.gz", true);
+        boolean compress = gzipStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.tar.gz", true);
         System.out.println(compress);
-        new File("H:\\学习笔记\\web\\后端\\java\\自定义工具类\\tools\\bct.tar").delete();
     }
 
     @Test

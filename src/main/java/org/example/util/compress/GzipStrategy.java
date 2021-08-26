@@ -1,5 +1,7 @@
 package org.example.util.compress;
 
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.example.util.io.FileUtils;
 import org.example.util.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.zip.GZIPOutputStream;
 
-public class GzipStrategy implements Compress {
+public class GzipStrategy extends AbstractCompress {
 
     private static final Logger logger = LoggerFactory.getLogger(TarStrategy.class);
 
@@ -32,7 +34,18 @@ public class GzipStrategy implements Compress {
         } finally {
             IOUtils.closeInputStream(tarInputStream);
             IOUtils.closeOutputStream(gos);
+            FileUtils.deleteFile(tarFile);
         }
         return isCompress;
+    }
+
+    @Override
+    boolean putDir(ArchiveOutputStream tarArchiveOutputStream, String destPath) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    boolean putFile(ArchiveOutputStream tarArchiveOutputStream, File sourceFile, String destPath) {
+        throw new UnsupportedOperationException();
     }
 }

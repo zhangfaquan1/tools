@@ -155,4 +155,18 @@ public class TestZipStrategy {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testCompress2() {
+        ZipStrategy zipStrategy = new ZipStrategy();
+        boolean compress = zipStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.zip", true);
+        System.out.println(compress);
+    }
+
+    @Test
+    public void testCompress3() {
+        ZipStrategy zipStrategy = new ZipStrategy();
+        boolean compress = zipStrategy.compress(new File("E:\\Work\\dumplib"), "dumplib.zip", 1024*1024, true);
+        System.out.println(compress);
+    }
 }
