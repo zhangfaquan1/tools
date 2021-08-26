@@ -40,7 +40,7 @@ public class TarStrategy extends AbstractCompress {
     }
 
     @Override
-    boolean putFile(ArchiveOutputStream tarArchiveOutputStream, File sourceFile, String destPath) {
+    protected boolean putFile(ArchiveOutputStream tarArchiveOutputStream, File sourceFile, String destPath) {
         TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(sourceFile, destPath);
         tarArchiveEntry.setSize(sourceFile.length());
         return putArchiveEntry(tarArchiveOutputStream, tarArchiveEntry, sourceFile);

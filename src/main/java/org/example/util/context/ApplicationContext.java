@@ -1,34 +1,36 @@
 package org.example.util.context;
 
 import org.example.util.cache.AbstractCacheSynchronizer;
+import org.example.util.factory.ReflectFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.AbstractQueuedSynchronizer;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ApplicationContext {
 
-    public static <T> T getInstance(String className, Class<T> clazz, boolean isSingleton) {
+    private final SingletonCache singleton = new SingletonCache();
+
+    public <T> T getInstance(String className, Class<T> clazz, boolean isSingleton) {
         return isSingleton ? getSingletonInstance(className, clazz) : getPrototypeInstance(className, clazz);
     }
 
-    public static <T> T getSingletonInstance(String className, Class<T> clazz) {
-        return null;
+    public <T> T getSingletonInstance(String className, Class<T> clazz) {
+        return singleton.getData(className, clazz);
     }
 
-    public static <T> T getPrototypeInstance(String className, Class<T> clazz) {
-        return null;
+    public <T> T getPrototypeInstance(String className, Class<T> clazz) {
+        return ReflectFactory.getInstance(className, clazz);
     }
 
     static final class SingletonCache extends AbstractCacheSynchronizer {
 
         private Map<String, Object> singletonCache = new HashMap<>();
 
-        public static <R> R getData() {
-
+        @SuppressWarnings("unchecked")
+        public <R> R getData(String className, Class<R> clazz) {
+            return super.getData(() -> (R) singletonCache.get(className), () -> {
+                singletonCache.put(className, ReflectFactory.getInstance(className, clazz));
+            });
         }
     }
 }

@@ -21,7 +21,7 @@ public class ZipStrategy extends AbstractCompress {
      * @return
      */
     @Override
-    boolean compress(File source, String dest, boolean strictMode) {
+    public boolean compress(File source, String dest, boolean strictMode) {
 
         List<Boolean> results = new ArrayList<>();
         try (ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(new File(dest))) {
@@ -37,7 +37,7 @@ public class ZipStrategy extends AbstractCompress {
      * @param size 设置分卷大小，注意zip合法的分卷大小在64kb到4gb之间，超出此范围的值会抛 java.lang.IllegalArgumentException 异常
      * @return
      */
-    boolean compress(File source, String dest, int size, boolean strictMode) {
+    public boolean compress(File source, String dest, int size, boolean strictMode) {
         List<Boolean> results = new ArrayList<>();
         try (ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(new File(dest), size)) {
             compress(zipArchiveOutputStream, source, results);
@@ -48,7 +48,7 @@ public class ZipStrategy extends AbstractCompress {
     }
 
     @Override
-    boolean putFile(ArchiveOutputStream archiveOutputStream, File sourceFile, String destPath) {
+    protected boolean putFile(ArchiveOutputStream archiveOutputStream, File sourceFile, String destPath) {
         if (sourceFile == null)
             return false;
         ZipArchiveEntry entry = new ZipArchiveEntry(sourceFile, destPath);

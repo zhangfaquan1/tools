@@ -18,7 +18,7 @@ public class SevenStrategy extends AbstractCompress {
     private static final Logger logger = LoggerFactory.getLogger(SevenStrategy.class);
 
     @Override
-    boolean compress(File source, String dest, boolean strictMode) {
+    public boolean compress(File source, String dest, boolean strictMode) {
         List<Boolean> results = new ArrayList<>();
         try (SevenZOutputFile sevenZOutput = new SevenZOutputFile(new File(dest))) {
             compress(sevenZOutput, source, results);

@@ -17,15 +17,15 @@ public abstract class AbstractCompress {
     private static final Logger logger = LoggerFactory.getLogger(AbstractCompress.class);
 
     /**
-     * @descriptions 压缩或打包接口。
      * @param strictMode 判断是否开启严格处理模式。
      *                   true-严格模式，只要有一个文件或目录打包不成功，则算打包不成功。
      *                   false-普通模式，只要有一个成功就算打包成功。
      * @return
+     * @descriptions 压缩或打包接口。
      */
-    abstract boolean compress(File source, String dest, boolean strictMode);
+    public abstract boolean compress(File source, String dest, boolean strictMode);
 
-    void compress(ArchiveOutputStream archiveOutputStream, File source, List<Boolean> results) {
+    protected void compress(ArchiveOutputStream archiveOutputStream, File source, List<Boolean> results) {
         String sourcePath = source.getPath();
         if (source.isDirectory()) {
             results.add(putFile(archiveOutputStream, source, FileUtils.getRelativePathByAbsolutePath(sourcePath, source.getPath())));
@@ -43,11 +43,11 @@ public abstract class AbstractCompress {
         results.add(putFile(archiveOutputStream, source, source.getName()));
     }
 
-    boolean putFile(ArchiveOutputStream archiveOutputStream, File sourceFile, String destPath) {
+    protected boolean putFile(ArchiveOutputStream archiveOutputStream, File sourceFile, String destPath) {
         return true;
     }
 
-    boolean putArchiveEntry(ArchiveOutputStream archiveOutputStream, ArchiveEntry archiveEntry, File sourceFile) {
+    protected boolean putArchiveEntry(ArchiveOutputStream archiveOutputStream, ArchiveEntry archiveEntry, File sourceFile) {
         boolean flag = true;
         InputStream bufferedInputStream = null;
         try {
@@ -66,7 +66,7 @@ public abstract class AbstractCompress {
         return flag;
     }
 
-    void closeArchiveEntry(ArchiveOutputStream archiveOutputStream) {
+    protected void closeArchiveEntry(ArchiveOutputStream archiveOutputStream) {
         try {
             archiveOutputStream.closeArchiveEntry();
         } catch (IOException e) {

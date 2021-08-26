@@ -2,11 +2,15 @@ package org.example.constant;
 
 public enum  CompressStrategyEnum {
 
-    GZIP("");
+    GZIP("org.example.util.compress.GzipStrategy");
 
     CompressStrategyEnum(String type) {
-        this.type = type;
+        this.strategyName = type;
     }
 
-    private String type;
+    private String strategyName;
+
+    public String getStrategyName() {
+        return strategyName;
+    }
 }
