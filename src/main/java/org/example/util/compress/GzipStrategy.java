@@ -1,6 +1,5 @@
 package org.example.util.compress;
 
-import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.example.util.io.FileUtils;
 import org.example.util.io.IOUtils;
 import org.slf4j.Logger;
@@ -37,15 +36,5 @@ public class GzipStrategy extends AbstractCompress {
             FileUtils.deleteFile(tarFile);
         }
         return isCompress;
-    }
-
-    @Override
-    boolean putDir(ArchiveOutputStream tarArchiveOutputStream, String destPath) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    boolean putFile(ArchiveOutputStream tarArchiveOutputStream, File sourceFile, String destPath) {
-        throw new UnsupportedOperationException();
     }
 }

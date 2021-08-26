@@ -40,15 +40,8 @@ public class TarStrategy extends AbstractCompress {
     }
 
     @Override
-    boolean putDir(ArchiveOutputStream tarArchiveOutputStream, String destPath) {
-        destPath = destPath.endsWith("/") ? destPath : destPath + "/";
-        TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(destPath);
-        return putArchiveEntry(tarArchiveOutputStream, tarArchiveEntry, null);
-    }
-
-    @Override
     boolean putFile(ArchiveOutputStream tarArchiveOutputStream, File sourceFile, String destPath) {
-        TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(destPath);
+        TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(sourceFile, destPath);
         tarArchiveEntry.setSize(sourceFile.length());
         return putArchiveEntry(tarArchiveOutputStream, tarArchiveEntry, sourceFile);
     }

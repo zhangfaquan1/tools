@@ -2,15 +2,11 @@ package org.example.util.compress;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.example.util.io.FileUtils;
 import org.example.util.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,12 +28,12 @@ public abstract class AbstractCompress {
     void compress(ArchiveOutputStream archiveOutputStream, File source, List<Boolean> results) {
         String sourcePath = source.getPath();
         if (source.isDirectory()) {
-            results.add(putDir(archiveOutputStream, FileUtils.getRelativePathByAbsolutePath(sourcePath, source.getPath())));
+            results.add(putFile(archiveOutputStream, source, FileUtils.getRelativePathByAbsolutePath(sourcePath, source.getPath())));
 
             // 递归处理带文件的目录
             FileUtils.treeWalk(source, file -> {
                 if (file.isDirectory())
-                    results.add(putDir(archiveOutputStream, FileUtils.getRelativePathByAbsolutePath(sourcePath, file.getPath())));
+                    results.add(putFile(archiveOutputStream, file, FileUtils.getRelativePathByAbsolutePath(sourcePath, file.getPath())));
                 if (file.isFile())
                     results.add(putFile(archiveOutputStream, file, FileUtils.getRelativePathByAbsolutePath(sourcePath, file.getPath())));
             });
@@ -47,22 +43,24 @@ public abstract class AbstractCompress {
         results.add(putFile(archiveOutputStream, source, source.getName()));
     }
 
-    abstract boolean putDir(ArchiveOutputStream tarArchiveOutputStream, String destPath);
-
-    abstract boolean putFile(ArchiveOutputStream tarArchiveOutputStream, File sourceFile, String destPath);
+    boolean putFile(ArchiveOutputStream archiveOutputStream, File sourceFile, String destPath) {
+        return true;
+    }
 
     boolean putArchiveEntry(ArchiveOutputStream archiveOutputStream, ArchiveEntry archiveEntry, File sourceFile) {
         boolean flag = true;
+        InputStream bufferedInputStream = null;
         try {
             archiveOutputStream.putArchiveEntry(archiveEntry);
-            if (!archiveEntry.isDirectory()) {
-                InputStream fileInputStream = IOUtils.getFileInputStream(sourceFile);
-                IOUtils.copyFile(fileInputStream, archiveOutputStream);
+            if (sourceFile.isFile()) {
+                bufferedInputStream = IOUtils.getBufferedInputStream(sourceFile);
+                IOUtils.copyFile(bufferedInputStream, archiveOutputStream);
             }
         } catch (IOException e) {
             flag = false;
             logger.error("tar包中加入目录：{} 出现异常。", archiveEntry.getName(), e);
         } finally {
+            IOUtils.closeInputStream(bufferedInputStream);
             closeArchiveEntry(archiveOutputStream);
         }
         return flag;

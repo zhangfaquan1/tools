@@ -171,6 +171,9 @@ public class IOUtils {
     }
 
     public static BufferedOutputStream getBufferedOutputStream(File file) {
+        if (file == null)
+            return null;
+
         BufferedOutputStream bufferedOutputStream = null;
         try {
             bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file));
@@ -185,6 +188,9 @@ public class IOUtils {
     }
 
     public static BufferedInputStream getBufferedInputStream(File file) {
+        if (file == null)
+            return null;
+
         BufferedInputStream bufferedInputStream = null;
         try {
             bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
@@ -195,6 +201,9 @@ public class IOUtils {
     }
 
     public static BufferedWriter getBufferedWriter(File file) {
+        if (file == null)
+            return null;
+
         BufferedWriter bufferedWriter = null;
         try {
             bufferedWriter = new BufferedWriter(new FileWriter(file));

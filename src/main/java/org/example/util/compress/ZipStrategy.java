@@ -17,7 +17,7 @@ public class ZipStrategy extends AbstractCompress {
 
     /**
      * @descriptions 整卷压缩
-     * @param null
+     * @param
      * @return
      */
     @Override
@@ -48,15 +48,10 @@ public class ZipStrategy extends AbstractCompress {
     }
 
     @Override
-    boolean putDir(ArchiveOutputStream archiveOutputStream, String destPath) {
-        destPath = destPath.endsWith("/") ? destPath : destPath + "/";
-        ZipArchiveEntry entry = new ZipArchiveEntry(destPath);
-        return putArchiveEntry(archiveOutputStream, entry, null);
-    }
-
-    @Override
     boolean putFile(ArchiveOutputStream archiveOutputStream, File sourceFile, String destPath) {
-        ZipArchiveEntry entry = new ZipArchiveEntry(destPath);
+        if (sourceFile == null)
+            return false;
+        ZipArchiveEntry entry = new ZipArchiveEntry(sourceFile, destPath);
         return putArchiveEntry(archiveOutputStream, entry, sourceFile);
     }
 }
