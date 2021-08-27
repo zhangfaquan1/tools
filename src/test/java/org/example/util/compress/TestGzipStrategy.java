@@ -13,7 +13,8 @@ public class TestGzipStrategy {
     @Test
     public void testCompress() {
         GzipStrategy gzipStrategy = new GzipStrategy();
-        boolean compress = gzipStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.tar.gz", true);
+//        boolean compress = gzipStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.tar.gz", true);
+        boolean compress = gzipStrategy.compress(new File("E:\\Work\\bct"), "bct.tar.gz", true);
         System.out.println(compress);
     }
 

@@ -24,7 +24,7 @@ public class TarStrategy extends AbstractCompress {
 
     public boolean compress(File source, File dest, boolean strictMode, int handlingContainer, int bufferSize) {
 
-        TarArchiveOutputStream tarArchiveOutputStream =  null;
+        TarArchiveOutputStream tarArchiveOutputStream = null;
         List<Boolean> results = new ArrayList<>();
         try {
             tarArchiveOutputStream = new TarArchiveOutputStream(new FileOutputStream(dest));
@@ -43,7 +43,8 @@ public class TarStrategy extends AbstractCompress {
     @Override
     protected boolean putFile(ArchiveOutputStream tarArchiveOutputStream, File sourceFile, String destPath, int handlingContainer, int bufferSize) {
         TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(sourceFile, destPath);
-        tarArchiveEntry.setSize(sourceFile.length());
+        if (sourceFile.isFile())
+            tarArchiveEntry.setSize(sourceFile.length());
         return putArchiveEntry(tarArchiveOutputStream, tarArchiveEntry, sourceFile, handlingContainer, bufferSize);
     }
 

@@ -1,10 +1,8 @@
 package org.example.util.compress;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.example.util.factory.ReflectFactory;
-import org.example.util.io.FileUtils;
 import org.example.util.io.IOUtils;
 import org.junit.Test;
 
@@ -112,8 +110,8 @@ public class TestTarStrategy {
     @Test
     public void testCompress() {
         TarStrategy tarStrategy = ReflectFactory.getInstance("org.example.util.compress.TarStrategy", TarStrategy.class);
-        File file = new File("E:\\Work\\scan-cdr");
-        boolean compress = tarStrategy.compress(file, "scan-cdr.tar", true);
+//        boolean compress = tarStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.tar", true);
+        boolean compress = tarStrategy.compress(new File("E:\\Work\\bct"), "bct.tar", true);
         System.out.println(compress);
     }
 

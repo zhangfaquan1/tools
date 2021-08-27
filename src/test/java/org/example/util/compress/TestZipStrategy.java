@@ -158,7 +158,8 @@ public class TestZipStrategy {
     @Test
     public void testCompress2() {
         ZipStrategy zipStrategy = new ZipStrategy();
-        boolean compress = zipStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.zip", true);
+//        boolean compress = zipStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.zip", true);
+        boolean compress = zipStrategy.compress(new File("E:\\Work\\bct"), "bct.zip", true);
         System.out.println(compress);
     }
 

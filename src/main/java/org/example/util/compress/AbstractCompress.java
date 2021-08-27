@@ -3,6 +3,7 @@ package org.example.util.compress;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,7 @@ public abstract class AbstractCompress {
      * @descriptions 压缩或打包接口。
      */
     public boolean compress(File source, String dest, boolean strictMode) {
-        return compress(source, dest, strictMode, 1024, DEFAULT_BUFFER_SIZE);
+        return compress(source, dest, strictMode, 64, DEFAULT_BUFFER_SIZE);
     }
 
     public boolean compress(File source, String dest, boolean strictMode, int handlingContainer) {
@@ -47,14 +48,14 @@ public abstract class AbstractCompress {
     protected void compress(ArchiveOutputStream archiveOutputStream, File source, List<Boolean> results, int handlingContainer, int bufferSize) {
         String sourcePath = source.getPath();
         if (source.isDirectory()) {
-            results.add(putFile(archiveOutputStream, source, FileUtils.getRelativePathByAbsolutePath(sourcePath, source.getPath()), handlingContainer, bufferSize));
+            results.add(putFile(archiveOutputStream, source, FileUtils.getRelativePathByAbsolutePath(sourcePath, source.getAbsolutePath()), handlingContainer, bufferSize));
 
             // 递归处理带文件的目录
             FileUtils.treeWalk(source, file -> {
                 if (file.isDirectory())
-                    results.add(putFile(archiveOutputStream, file, FileUtils.getRelativePathByAbsolutePath(sourcePath, file.getPath()), handlingContainer, bufferSize));
+                    results.add(putFile(archiveOutputStream, file, FileUtils.getRelativePathByAbsolutePath(sourcePath, file.getAbsolutePath()), handlingContainer, bufferSize));
                 if (file.isFile())
-                    results.add(putFile(archiveOutputStream, file, FileUtils.getRelativePathByAbsolutePath(sourcePath, file.getPath()), handlingContainer, bufferSize));
+                    results.add(putFile(archiveOutputStream, file, FileUtils.getRelativePathByAbsolutePath(sourcePath, file.getAbsolutePath()), handlingContainer, bufferSize));
             });
 
             return;

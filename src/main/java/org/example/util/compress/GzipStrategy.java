@@ -16,7 +16,7 @@ public class GzipStrategy extends AbstractCompress {
     public boolean compress(File source, String destPath, boolean strictMode, int handlingContainer, int bufferSize) {
         GZIPOutputStream gos = null;
         InputStream tarInputStream = null;
-        boolean isCompress = false;
+        boolean isCompress = true;
         String tarFile = source.getName() + ".tar";
         try {
             // 创建一个 FileOutputStream 到输出文件（.tar.gz）
@@ -24,10 +24,10 @@ public class GzipStrategy extends AbstractCompress {
             gos = new GZIPOutputStream(new BufferedOutputStream(fileOutputStream));
             TarStrategy tarStrategy = new TarStrategy();
             if (!tarStrategy.compress(source, tarFile, strictMode, handlingContainer, bufferSize))
-                return false;
+                isCompress = false;
 
             tarInputStream = IOUtils.getBufferedInputStream(tarFile);
-            isCompress = IOUtils.copyFile(tarInputStream, gos);
+            isCompress = isCompress && IOUtils.copyFile(tarInputStream, gos);
         } catch (IOException e) {
             logger.error("gzip方式压缩失败。", e);
         } finally {
