@@ -16,12 +16,12 @@ public class TarStrategy extends AbstractCompress {
     private static final Logger logger = LoggerFactory.getLogger(TarStrategy.class);
 
     @Override
-    public boolean compress(File source, String destPath, boolean strictMode) {
+    public boolean compress(File source, String destPath, boolean strictMode, int handlingContainer, int bufferSize) {
 
-        return compress(source, new File(destPath), strictMode);
+        return compress(source, new File(destPath), strictMode, handlingContainer, bufferSize);
     }
 
-    public boolean compress(File source, File dest, boolean strictMode) {
+    public boolean compress(File source, File dest, boolean strictMode, int handlingContainer, int bufferSize) {
 
         TarArchiveOutputStream tarArchiveOutputStream =  null;
         List<Boolean> results = new ArrayList<>();
@@ -29,7 +29,7 @@ public class TarStrategy extends AbstractCompress {
             tarArchiveOutputStream = new TarArchiveOutputStream(new FileOutputStream(dest));
             // 若不设置此模式，当文件名超过 100 个字节时会抛出异常，但是这个模式存在兼容性问题，有些系统无法使用。
             tarArchiveOutputStream.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
-            compress(tarArchiveOutputStream, source, results);
+            compress(tarArchiveOutputStream, source, results, handlingContainer, bufferSize);
         } catch (FileNotFoundException e) {
             logger.error("打tar包：{} 时出错。", dest, e);
         } finally {
@@ -40,9 +40,14 @@ public class TarStrategy extends AbstractCompress {
     }
 
     @Override
-    protected boolean putFile(ArchiveOutputStream tarArchiveOutputStream, File sourceFile, String destPath) {
+    protected boolean putFile(ArchiveOutputStream tarArchiveOutputStream, File sourceFile, String destPath, int handlingContainer, int bufferSize) {
         TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(sourceFile, destPath);
         tarArchiveEntry.setSize(sourceFile.length());
-        return putArchiveEntry(tarArchiveOutputStream, tarArchiveEntry, sourceFile);
+        return putArchiveEntry(tarArchiveOutputStream, tarArchiveEntry, sourceFile, handlingContainer, bufferSize);
+    }
+
+    @Override
+    public boolean unCompress(File source, String dest, boolean strictMode) {
+        return false;
     }
 }

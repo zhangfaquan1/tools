@@ -18,10 +18,10 @@ public class SevenStrategy extends AbstractCompress {
     private static final Logger logger = LoggerFactory.getLogger(SevenStrategy.class);
 
     @Override
-    public boolean compress(File source, String dest, boolean strictMode) {
+    public boolean compress(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
         List<Boolean> results = new ArrayList<>();
         try (SevenZOutputFile sevenZOutput = new SevenZOutputFile(new File(dest))) {
-            compress(sevenZOutput, source, results);
+            compress(sevenZOutput, source, results, handlingContainer, bufferSize);
             sevenZOutput.finish();
         } catch (IOException e) {
             logger.error("zip方式压缩失败。", e);
@@ -29,22 +29,22 @@ public class SevenStrategy extends AbstractCompress {
         return strictMode ? results.stream().noneMatch(aBoolean -> aBoolean == null || !aBoolean) : results.stream().anyMatch(aBoolean -> aBoolean != null && aBoolean);
     }
 
-    void compress(SevenZOutputFile sevenZOutput, File source, List<Boolean> results) {
+    void compress(SevenZOutputFile sevenZOutput, File source, List<Boolean> results, int handlingContainer, int bufferSize) {
         String sourcePath = source.getPath();
         if (source.isDirectory()) {
-            results.add(putArchiveEntry(sevenZOutput, source, FileUtils.getRelativePathByAbsolutePath(sourcePath, source.getPath())));
+            results.add(putArchiveEntry(sevenZOutput, source, FileUtils.getRelativePathByAbsolutePath(sourcePath, source.getPath()), handlingContainer, bufferSize));
 
             // 递归处理带文件的目录
             FileUtils.treeWalk(source, file ->
-                    results.add(putArchiveEntry(sevenZOutput, file, FileUtils.getRelativePathByAbsolutePath(sourcePath, file.getPath())))
+                    results.add(putArchiveEntry(sevenZOutput, file, FileUtils.getRelativePathByAbsolutePath(sourcePath, file.getPath()), handlingContainer, bufferSize))
             );
 
             return;
         }
-        results.add(putArchiveEntry(sevenZOutput, source, source.getName()));
+        results.add(putArchiveEntry(sevenZOutput, source, source.getName(), handlingContainer, bufferSize));
     }
 
-    boolean putArchiveEntry(SevenZOutputFile sevenZOutput, File sourceFile, String destPath) {
+    boolean putArchiveEntry(SevenZOutputFile sevenZOutput, File sourceFile, String destPath, int handlingContainer, int bufferSize) {
         boolean flag = true;
         if (sourceFile == null)
             return false;
@@ -61,9 +61,9 @@ public class SevenStrategy extends AbstractCompress {
         try {
             sevenZOutput.putArchiveEntry(archiveEntry);
             if (sourceFile.isFile()) {
-                bufferedInputStream = IOUtils.getBufferedInputStream(sourceFile);
+                bufferedInputStream = IOUtils.getBufferedInputStream(sourceFile, bufferSize);
                 int len;
-                byte[] b = new byte[1024];
+                byte[] b = new byte[handlingContainer];
                 while ((len = bufferedInputStream.read(b)) != -1) {
                     sevenZOutput.write(b, 0, len);
                 }
@@ -76,6 +76,11 @@ public class SevenStrategy extends AbstractCompress {
             IOUtils.closeInputStream(bufferedInputStream);
         }
         return flag;
+    }
+
+    @Override
+    public boolean unCompress(File source, String dest, boolean strictMode) {
+        return false;
     }
 
     void closeArchiveEntry(SevenZOutputFile sevenZOutput) {

@@ -13,7 +13,7 @@ public class GzipStrategy extends AbstractCompress {
     private static final Logger logger = LoggerFactory.getLogger(TarStrategy.class);
 
     @Override
-    public boolean compress(File source, String destPath, boolean strictMode) {
+    public boolean compress(File source, String destPath, boolean strictMode, int handlingContainer, int bufferSize) {
         GZIPOutputStream gos = null;
         InputStream tarInputStream = null;
         boolean isCompress = false;
@@ -23,7 +23,7 @@ public class GzipStrategy extends AbstractCompress {
             FileOutputStream fileOutputStream = new FileOutputStream(destPath);
             gos = new GZIPOutputStream(new BufferedOutputStream(fileOutputStream));
             TarStrategy tarStrategy = new TarStrategy();
-            if (!tarStrategy.compress(source, tarFile, strictMode))
+            if (!tarStrategy.compress(source, tarFile, strictMode, handlingContainer, bufferSize))
                 return false;
 
             tarInputStream = IOUtils.getBufferedInputStream(tarFile);
@@ -36,5 +36,10 @@ public class GzipStrategy extends AbstractCompress {
             FileUtils.deleteFile(tarFile);
         }
         return isCompress;
+    }
+
+    @Override
+    public boolean unCompress(File source, String dest, boolean strictMode) {
+        return false;
     }
 }

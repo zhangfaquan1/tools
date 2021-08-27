@@ -21,11 +21,11 @@ public class ZipStrategy extends AbstractCompress {
      * @return
      */
     @Override
-    public boolean compress(File source, String dest, boolean strictMode) {
+    public boolean compress(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
 
         List<Boolean> results = new ArrayList<>();
         try (ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(new File(dest))) {
-            compress(zipArchiveOutputStream, source, results);
+            compress(zipArchiveOutputStream, source, results, handlingContainer, bufferSize);
         } catch (IOException e) {
             logger.error("zip方式压缩失败。", e);
         }
@@ -37,10 +37,10 @@ public class ZipStrategy extends AbstractCompress {
      * @param size 设置分卷大小，注意zip合法的分卷大小在64kb到4gb之间，超出此范围的值会抛 java.lang.IllegalArgumentException 异常
      * @return
      */
-    public boolean compress(File source, String dest, int size, boolean strictMode) {
+    public boolean compress(File source, String dest, int size, boolean strictMode, int handlingContainer, int bufferSize) {
         List<Boolean> results = new ArrayList<>();
         try (ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(new File(dest), size)) {
-            compress(zipArchiveOutputStream, source, results);
+            compress(zipArchiveOutputStream, source, results, handlingContainer, bufferSize);
         } catch (Exception e) {
             logger.error("zip方式压缩失败。", e);
         }
@@ -48,10 +48,15 @@ public class ZipStrategy extends AbstractCompress {
     }
 
     @Override
-    protected boolean putFile(ArchiveOutputStream archiveOutputStream, File sourceFile, String destPath) {
+    protected boolean putFile(ArchiveOutputStream archiveOutputStream, File sourceFile, String destPath, int handlingContainer, int bufferSize) {
         if (sourceFile == null)
             return false;
         ZipArchiveEntry entry = new ZipArchiveEntry(sourceFile, destPath);
-        return putArchiveEntry(archiveOutputStream, entry, sourceFile);
+        return putArchiveEntry(archiveOutputStream, entry, sourceFile, handlingContainer, bufferSize);
+    }
+
+    @Override
+    public boolean unCompress(File source, String dest, boolean strictMode) {
+        return false;
     }
 }

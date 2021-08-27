@@ -16,6 +16,8 @@ public class IOUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(IOUtils.class);
 
+    private static final int DEFAULT_BUFFER_SIZE = 8192;
+
     public static boolean copyFile(String sourcePath, String destPath, boolean isByte) {
         File file = new File(sourcePath);
         if (isByte) {
@@ -184,16 +186,20 @@ public class IOUtils {
     }
 
     public static BufferedInputStream getBufferedInputStream(String filePath) {
-        return getBufferedInputStream(new File(filePath));
+        return getBufferedInputStream(new File(filePath), DEFAULT_BUFFER_SIZE);
     }
 
     public static BufferedInputStream getBufferedInputStream(File file) {
+        return getBufferedInputStream(file, DEFAULT_BUFFER_SIZE);
+    }
+
+    public static BufferedInputStream getBufferedInputStream(File file, int bufferSize) {
         if (file == null)
             return null;
 
         BufferedInputStream bufferedInputStream = null;
         try {
-            bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
+            bufferedInputStream = new BufferedInputStream(new FileInputStream(file), bufferSize);
         } catch (FileNotFoundException e) {
             logger.error("指定的目标路径非法。路径：{}", file.getPath(), e);
         }
