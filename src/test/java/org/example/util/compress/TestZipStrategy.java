@@ -42,7 +42,7 @@ public class TestZipStrategy {
         while (entries.hasMoreElements()) {
             entry = entries.nextElement();
             if (entry.isDirectory()) {
-                continue;
+//                continue;
             }
 
             File outputFile = new File("E:\\Work\\output\\" + entry.getName());
@@ -52,12 +52,11 @@ public class TestZipStrategy {
             }
 
             inputStream = zipFile.getInputStream(entry);
-            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-                while (inputStream.read(buffer) > 0) {
-                    fos.write(buffer);
+            int len;
+            try (OutputStream fos = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+                while ((len = inputStream.read(buffer)) != 0) {
+                    fos.write(buffer, 0, len);
                 }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -168,5 +167,40 @@ public class TestZipStrategy {
         ZipStrategy zipStrategy = new ZipStrategy();
         boolean compress = zipStrategy.compress(new File("E:\\Work\\dumplib"), "dumplib.zip", 1024*1024, true);
         System.out.println(compress);
+    }
+
+    @Test
+    public void testGetEntries() throws IOException {
+        ZipFile zipFile = new ZipFile("scan-cdr.zip");
+        Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+        System.out.println(entries);
+        ZipArchiveEntry a = zipFile.getEntry("a");
+
+        System.out.println(a);
+        Iterable<ZipArchiveEntry> entries1 = zipFile.getEntries("scan-cdr/src/");
+        entries1.forEach(zipArchiveEntry -> {
+            System.out.println(zipArchiveEntry.getName());
+        });
+    }
+
+    @Test
+    public void testUncompress() {
+        AbstractCompress zipStrategy = new ZipStrategy();
+        boolean b = zipStrategy.unCompress(new File("scan-cdr.zip"), "E:\\Work\\de", true);
+        System.out.println(b);
+    }
+
+    @Test
+    public void testUncompress3() {
+        ZipStrategy zipStrategy = new ZipStrategy();
+        boolean b = zipStrategy.unCompressSingleByRandom(new File("scan-cdr.zip"), "E:\\Work\\de", "scan-cdr/src/main/java/org/example/Test.java", 1024, AbstractCompress.DEFAULT_BUFFER_SIZE);
+        System.out.println(b);
+    }
+
+    @Test
+    public void testUncompress4() {
+        ZipStrategy zipStrategy = new ZipStrategy();
+        boolean b = zipStrategy.unCompressAllByOrder(new File("scan-cdr.zip"), "E:\\Work\\d", true, 1024, AbstractCompress.DEFAULT_BUFFER_SIZE);
+        System.out.println(b);
     }
 }

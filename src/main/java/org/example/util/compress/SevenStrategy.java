@@ -26,7 +26,12 @@ public class SevenStrategy extends AbstractCompress {
         } catch (IOException e) {
             logger.error("zip方式压缩失败。", e);
         }
-        return strictMode ? results.stream().noneMatch(aBoolean -> aBoolean == null || !aBoolean) : results.stream().anyMatch(aBoolean -> aBoolean != null && aBoolean);
+        return isSuccess(strictMode, results);
+    }
+
+    @Override
+    public boolean unCompress(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
+        return false;
     }
 
     void compress(SevenZOutputFile sevenZOutput, File source, List<Boolean> results, int handlingContainer, int bufferSize) {
@@ -78,10 +83,7 @@ public class SevenStrategy extends AbstractCompress {
         return flag;
     }
 
-    @Override
-    public boolean unCompress(File source, String dest, boolean strictMode) {
-        return false;
-    }
+
 
     void closeArchiveEntry(SevenZOutputFile sevenZOutput) {
         try {

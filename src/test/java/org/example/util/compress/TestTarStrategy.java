@@ -113,7 +113,13 @@ public class TestTarStrategy {
     public void testCompress() {
         TarStrategy tarStrategy = ReflectFactory.getInstance("org.example.util.compress.TarStrategy", TarStrategy.class);
         File file = new File("E:\\Work\\scan-cdr");
-        boolean compress = tarStrategy.compress(file, "test2.tar", true);
+        boolean compress = tarStrategy.compress(file, "scan-cdr.tar", true);
         System.out.println(compress);
+    }
+
+    @Test
+    public void testUnCompress() {
+        TarStrategy tarStrategy = new TarStrategy();
+        tarStrategy.unCompress(new File("scan-cdr.tar"), "E:\\Work\\de", true);
     }
 }

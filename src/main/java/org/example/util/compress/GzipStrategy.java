@@ -39,7 +39,8 @@ public class GzipStrategy extends AbstractCompress {
     }
 
     @Override
-    public boolean unCompress(File source, String dest, boolean strictMode) {
+    public boolean unCompress(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
         return false;
     }
+
 }

@@ -205,7 +205,7 @@ public class FileUtils {
     }
 
     public static boolean mkdirs(String filePath) {
-        return mkdirs(filePath);
+        return mkdirs(new File(filePath));
     }
 
     public static boolean mkdirs(File file) {

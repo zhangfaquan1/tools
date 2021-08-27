@@ -169,16 +169,24 @@ public class IOUtils {
     }
 
     public static BufferedOutputStream getBufferedOutputStream(String filePath) {
-        return getBufferedOutputStream(new File(filePath));
+        return getBufferedOutputStream(filePath, DEFAULT_BUFFER_SIZE);
     }
 
     public static BufferedOutputStream getBufferedOutputStream(File file) {
+        return getBufferedOutputStream(file, DEFAULT_BUFFER_SIZE);
+    }
+
+    public static BufferedOutputStream getBufferedOutputStream(String filePath, int bufferSize) {
+        return getBufferedOutputStream(new File(filePath), bufferSize);
+    }
+
+    public static BufferedOutputStream getBufferedOutputStream(File file, int bufferSize) {
         if (file == null)
             return null;
 
         BufferedOutputStream bufferedOutputStream = null;
         try {
-            bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file));
+            bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file), bufferSize);
         } catch (FileNotFoundException e) {
             logger.error("指定的目标路径非法。", e);
         }

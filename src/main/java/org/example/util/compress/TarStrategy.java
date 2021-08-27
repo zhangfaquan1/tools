@@ -2,6 +2,7 @@ package org.example.util.compress;
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.example.util.io.IOUtils;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class TarStrategy extends AbstractCompress {
             IOUtils.closeOutputStream(tarArchiveOutputStream);
         }
 
-        return strictMode ? results.stream().noneMatch(aBoolean -> aBoolean == null || !aBoolean) : results.stream().anyMatch(aBoolean -> aBoolean != null && aBoolean);
+        return isSuccess(strictMode, results);
     }
 
     @Override
@@ -47,7 +48,8 @@ public class TarStrategy extends AbstractCompress {
     }
 
     @Override
-    public boolean unCompress(File source, String dest, boolean strictMode) {
-        return false;
+    public boolean unCompress(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
+        TarArchiveInputStream tarArchiveInputStream = new TarArchiveInputStream(IOUtils.getFileInputStream(source));
+        return unCompress(tarArchiveInputStream, dest, strictMode, handlingContainer, bufferSize);
     }
 }

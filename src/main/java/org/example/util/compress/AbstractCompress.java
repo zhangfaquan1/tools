@@ -1,7 +1,11 @@
 package org.example.util.compress;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.example.util.io.FileUtils;
 import org.example.util.io.IOUtils;
 import org.slf4j.Logger;
@@ -10,13 +14,14 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractCompress {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractCompress.class);
 
-    private static final int DEFAULT_BUFFER_SIZE = 8192;
+    public static final int DEFAULT_BUFFER_SIZE = 8192;
 
     /**
      * @param strictMode 判断是否开启严格处理模式。
@@ -80,7 +85,59 @@ public abstract class AbstractCompress {
         return flag;
     }
 
-    public abstract boolean unCompress(File source, String dest, boolean strictMode);
+    public boolean unCompress(File source, String dest, boolean strictMode) {
+        return unCompress(source, dest, strictMode, 1024, DEFAULT_BUFFER_SIZE);
+    }
+
+    public boolean unCompress(File source, String dest, boolean strictMode, int handlingContainer) {
+        return unCompress(source, dest, strictMode, handlingContainer, DEFAULT_BUFFER_SIZE);
+    }
+
+    public boolean unCompress(File source, String dest, int bufferSize, boolean strictMode) {
+        return unCompress(source, dest, strictMode, 1024, bufferSize);
+    }
+
+    public abstract boolean unCompress(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize);
+
+    protected boolean unCompress(ArchiveInputStream archiveInputStream, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
+        if (!FileUtils.mkdirs(dest))
+            return false;
+
+        List<Boolean> results = new ArrayList<>();
+        try {
+            ArchiveEntry entry;
+            while ((entry = archiveInputStream.getNextEntry()) != null) {
+                if (entry.isDirectory()) {
+                    results.add(unCompressDir(dest, entry.getName()));
+                } else {
+                    results.add(unCompressFile(archiveInputStream, dest, entry.getName(), handlingContainer, bufferSize));
+                }
+            }
+        } catch (Exception e) {
+            logger.error("使用顺序方式解压全部文件时出现异常。", e);
+        } finally {
+            IOUtils.closeInputStream(archiveInputStream);
+        }
+
+        return isSuccess(strictMode, results);
+    }
+
+    protected boolean unCompressFile(InputStream inputStream, String dest, String relativePath, int handlingContainer, int bufferSize) {
+        if (inputStream == null || StringUtils.isBlank(dest) || StringUtils.isBlank(relativePath)) {
+            logger.error("传入 unCompressFile 的参数含空值");
+            return false;
+        }
+        File outputFile = new File(dest, relativePath);
+        if (!outputFile.getParentFile().exists()) {
+            FileUtils.mkdirs(outputFile.getParentFile());
+        }
+        return IOUtils.copyFile(inputStream, IOUtils.getBufferedOutputStream(outputFile, bufferSize), handlingContainer);
+    }
+
+    protected boolean unCompressDir(String dest, String relativePath) {
+        File outputFile = new File(dest, relativePath);
+        return outputFile.exists() || FileUtils.mkdirs(outputFile);
+    }
 
     protected void closeArchiveEntry(ArchiveOutputStream archiveOutputStream) {
         try {
@@ -88,5 +145,9 @@ public abstract class AbstractCompress {
         } catch (IOException e) {
             logger.error("关闭ArchiveEntry资源出现异常。", e);
         }
+    }
+
+    protected boolean isSuccess(boolean strictMode, List<Boolean> results) {
+        return strictMode ? results.stream().noneMatch(aBoolean -> aBoolean == null || !aBoolean) : results.stream().anyMatch(aBoolean -> aBoolean != null && aBoolean);
     }
 }
