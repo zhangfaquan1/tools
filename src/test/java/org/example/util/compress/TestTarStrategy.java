@@ -110,8 +110,8 @@ public class TestTarStrategy {
     @Test
     public void testCompress() {
         TarStrategy tarStrategy = ReflectFactory.getInstance("org.example.util.compress.TarStrategy", TarStrategy.class);
-//        boolean compress = tarStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.tar", true);
-        boolean compress = tarStrategy.compress(new File("E:\\Work\\bct"), "bct.tar", true);
+        boolean compress = tarStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.tar", true);
+//        boolean compress = tarStrategy.compress(new File("E:\\Work\\bct"), "bct.tar", true);
         System.out.println(compress);
     }
 

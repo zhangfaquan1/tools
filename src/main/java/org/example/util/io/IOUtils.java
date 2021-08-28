@@ -188,13 +188,17 @@ public class IOUtils {
         try {
             bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file), bufferSize);
         } catch (FileNotFoundException e) {
-            logger.error("指定的目标路径非法。", e);
+            logger.error("指定的目标路径非法。路径：{}", file.getPath(), e);
         }
         return bufferedOutputStream;
     }
 
     public static BufferedInputStream getBufferedInputStream(String filePath) {
         return getBufferedInputStream(new File(filePath), DEFAULT_BUFFER_SIZE);
+    }
+
+    public static BufferedInputStream getBufferedInputStream(String filePath, int bufferSize) {
+        return getBufferedInputStream(new File(filePath), bufferSize);
     }
 
     public static BufferedInputStream getBufferedInputStream(File file) {
@@ -232,7 +236,7 @@ public class IOUtils {
         if (inputStream != null) {
             try {
                 inputStream.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("字节输入流关闭异常！", e);
             }
         }
@@ -242,7 +246,7 @@ public class IOUtils {
         if (outputStream != null) {
             try {
                 outputStream.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("字节输出流关闭异常！", e);
             }
         }
@@ -252,7 +256,7 @@ public class IOUtils {
         if (reader != null) {
             try {
                 reader.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("字符输入流关闭异常！", e);
             }
         }
@@ -262,7 +266,7 @@ public class IOUtils {
         if (writer != null) {
             try {
                 writer.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("字符输出流关闭异常！", e);
             }
         }

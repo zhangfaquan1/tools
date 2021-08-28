@@ -1,10 +1,8 @@
 package org.example.util.compress;
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.compress.archivers.zip.*;
+import org.apache.commons.lang3.StringUtils;
 import org.example.util.io.FileUtils;
 import org.example.util.io.IOUtils;
 import org.slf4j.Logger;
@@ -14,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.SeekableByteChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -67,33 +66,35 @@ public class ZipStrategy extends AbstractCompress {
         return unCompressAllByRandom(source, dest, strictMode, handlingContainer, bufferSize);
     }
 
+    // 实现随机方式解压缩
     public boolean unCompressAllByRandom(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
-        if (!FileUtils.mkdirs(dest))
-            return false;
-
-        List<Boolean> results = new ArrayList<>();
+        boolean flag = false;
         ZipFile zipFile = null;
-        InputStream inputStream = null;
         try {
             zipFile = new ZipFile(source);
-            Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-            ZipArchiveEntry entry;
-            while (entries.hasMoreElements()) {
-                entry = entries.nextElement();
-                if (entry.isDirectory()) {
-                    results.add(unCompressDir(dest, entry.getName()));
-                } else {
-                    inputStream = zipFile.getInputStream(entry);
-                    results.add(unCompressFile(inputStream, dest, entry.getName(), handlingContainer, bufferSize));
-                }
-            }
+            flag = unCompress(zipFile, dest, strictMode, handlingContainer, bufferSize);
         } catch (IOException e) {
             logger.error("使用随机方式解压全部文件时出现异常。", e);
         } finally {
-            IOUtils.closeInputStream(inputStream);
             closeZipFile(zipFile);
         }
-        return isSuccess(strictMode, results);
+        return flag;
+    }
+
+    // 实现分卷解压缩。
+    public boolean unCompressVolumeByRandom(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
+        boolean flag = false;
+        ZipFile zipFile = null;
+        try {
+            SeekableByteChannel channel = ZipSplitReadOnlySeekableByteChannel.buildFromLastSplitSegment(source);
+            zipFile = new ZipFile(channel);
+            flag = unCompress(zipFile, dest, strictMode, handlingContainer, bufferSize);
+        } catch (IOException e) {
+            logger.error("使用随机方式解压全部文件时出现异常。", e);
+        } finally {
+            closeZipFile(zipFile);
+        }
+        return flag;
     }
 
     // 仅支持解压出单文件。
@@ -117,7 +118,37 @@ public class ZipStrategy extends AbstractCompress {
         return false;
     }
 
-    // 解压文件 - 顺序
+    public boolean unCompress(ZipFile zipFile, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
+        if (zipFile == null || StringUtils.isBlank(dest)) {
+            logger.error("传入unCompress方法的参数中含空值");
+            return false;
+        }
+        if (!FileUtils.mkdirs(dest))
+            return false;
+
+        List<Boolean> results = new ArrayList<>();
+        InputStream inputStream = null;
+        try {
+            Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+            ZipArchiveEntry entry;
+            while (entries.hasMoreElements()) {
+                entry = entries.nextElement();
+                if (entry.isDirectory()) {
+                    results.add(unCompressDir(dest, entry.getName()));
+                } else {
+                    inputStream = zipFile.getInputStream(entry);
+                    results.add(unCompressFile(inputStream, dest, entry.getName(), handlingContainer, bufferSize));
+                }
+            }
+        } catch (IOException e) {
+            logger.error("使用随机方式解压全部文件时出现异常。", e);
+        } finally {
+            IOUtils.closeInputStream(inputStream);
+        }
+        return isSuccess(strictMode, results);
+    }
+
+    // 实现顺序方式解压缩
     public boolean unCompressAllByOrder(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
         ZipArchiveInputStream zipInputStream = new ZipArchiveInputStream(IOUtils.getFileInputStream(source));
         return unCompress(zipInputStream, dest, strictMode, handlingContainer, bufferSize);

@@ -1,7 +1,10 @@
 package org.example.util.compress;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.lang3.StringUtils;
 import org.example.util.io.FileUtils;
 import org.example.util.io.IOUtils;
 import org.slf4j.Logger;
@@ -31,7 +34,33 @@ public class SevenStrategy extends AbstractCompress {
 
     @Override
     public boolean unCompress(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
-        return false;
+        if (source == null || StringUtils.isBlank(dest)) {
+            logger.error("传入unCompress方法的参数中含空值");
+            return false;
+        }
+
+        SevenZFile sevenZFile = null;
+        SevenZArchiveEntry entry;
+        InputStream inputStream = null;
+        List<Boolean> results = new ArrayList<>();
+        try {
+            sevenZFile = new SevenZFile(source);
+            while ((entry = sevenZFile.getNextEntry()) != null) {
+                if (entry.isDirectory()) {
+                    results.add(unCompressDir(dest, entry.getName()));
+                } else {
+                    inputStream = sevenZFile.getInputStream(entry);
+                    results.add(unCompressFile(inputStream, dest, entry.getName(), handlingContainer, bufferSize));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeInputStream(inputStream);
+            closeSevenZFile(sevenZFile);
+        }
+
+        return isSuccess(strictMode, results);
     }
 
     void compress(SevenZOutputFile sevenZOutput, File source, List<Boolean> results, int handlingContainer, int bufferSize) {
@@ -83,13 +112,21 @@ public class SevenStrategy extends AbstractCompress {
         return flag;
     }
 
-
-
     void closeArchiveEntry(SevenZOutputFile sevenZOutput) {
         try {
             sevenZOutput.closeArchiveEntry();
         } catch (IOException e) {
             logger.error("关闭ArchiveEntry资源出现异常。", e);
+        }
+    }
+
+    public void closeSevenZFile(SevenZFile sevenZFile) {
+        if (sevenZFile != null) {
+            try {
+                sevenZFile.close();
+            } catch (IOException e) {
+                logger.error("关闭SevenZFile对象时出现异常。", e);
+            }
         }
     }
 }

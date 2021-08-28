@@ -1,5 +1,7 @@
 package org.example.util.compress;
 
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.example.util.io.FileUtils;
 import org.example.util.io.IOUtils;
 import org.slf4j.Logger;
@@ -40,7 +42,35 @@ public class GzipStrategy extends AbstractCompress {
 
     @Override
     public boolean unCompress(File source, String dest, boolean strictMode, int handlingContainer, int bufferSize) {
-        return false;
+        if (source == null || StringUtils.isBlank(dest)) {
+            logger.error("传入 unCompress 的参数含空值。");
+            return false;
+        }
+
+        if (!FileUtils.mkdirs(dest))
+            return false;
+
+        InputStream in = null;
+        File tarFile = new File(dest, source.getName());
+        OutputStream out = null;
+        GzipCompressorInputStream gzIn = null;
+        boolean flag = false;
+        try {
+            in = IOUtils.getBufferedInputStream(source);
+            out = IOUtils.getBufferedOutputStream(tarFile, bufferSize);
+            gzIn = new GzipCompressorInputStream(in);
+            IOUtils.copyFile(gzIn, out, handlingContainer);
+            TarStrategy tarStrategy = new TarStrategy();
+            flag = tarStrategy.unCompress(tarFile, dest, strictMode, handlingContainer, bufferSize);
+        } catch (IOException e) {
+            logger.error("gzip解压时出现异常。", e);
+        } finally {
+            IOUtils.closeInputStream(in);
+            IOUtils.closeOutputStream(out);
+            IOUtils.closeInputStream(gzIn);
+            FileUtils.deleteFile(tarFile);
+        }
+        return flag;
     }
 
 }

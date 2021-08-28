@@ -13,8 +13,8 @@ public class TestGzipStrategy {
     @Test
     public void testCompress() {
         GzipStrategy gzipStrategy = new GzipStrategy();
-//        boolean compress = gzipStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.tar.gz", true);
-        boolean compress = gzipStrategy.compress(new File("E:\\Work\\bct"), "bct.tar.gz", true);
+        boolean compress = gzipStrategy.compress(new File("E:\\Work\\scan-cdr"), "scan-cdr.tar.gz", true);
+//        boolean compress = gzipStrategy.compress(new File("E:\\Work\\bct"), "bct.tar.gz", true);
         System.out.println(compress);
     }
 
@@ -74,5 +74,12 @@ public class TestGzipStrategy {
                 }
             }
         }
+    }
+
+    @Test
+    public void testUncompress() {
+        AbstractCompress gzipStrategy = new GzipStrategy();
+        boolean b = gzipStrategy.unCompress(new File("scan-cdr.tar.gz"), "E:\\Work\\scan", true);
+        System.out.println(b);
     }
 }

@@ -103,17 +103,20 @@ public class TestZipStrategy {
     @Test
     public void testUnCompress4() throws IOException {
         // 可以通过最后一个分卷zip文件创建channel，注意需要保证所有分卷文件都在同一目录下，并且除后缀名之外文件名相同
-        File lastSegmentFile = new File("/root/test.zip");
-        SeekableByteChannel channel = ZipSplitReadOnlySeekableByteChannel.buildFromLastSplitSegment(lastSegmentFile);
+//        File lastSegmentFile = new File("E:\\java\\自定义工具类\\tools\\dumplib.zip");
+//        SeekableByteChannel channel = ZipSplitReadOnlySeekableByteChannel.buildFromLastSplitSegment(lastSegmentFile);
 
         // 也可以通过指定所有zip分卷文件创建channel
-        File firstSegmentFile = new File("/root/test.z01");
-        File secondSegmentFile = new File("/root/test.z02");
-        File thirdSegmentFile = new File("/root/test.zip");
-        SeekableByteChannel channel2 = ZipSplitReadOnlySeekableByteChannel.forFiles(firstSegmentFile, secondSegmentFile, thirdSegmentFile);
+//        File firstSegmentFile = new File("/root/test.z01");
+//        File secondSegmentFile = new File("/root/test.z02");
+//        File thirdSegmentFile = new File("/root/test.zip");
+//        SeekableByteChannel channel2 = ZipSplitReadOnlySeekableByteChannel.forFiles(firstSegmentFile, secondSegmentFile, thirdSegmentFile);
 
 //        然后调用ZipFile或者ZipArchiveInputStream解压
-        ZipFile zipFile = new ZipFile(channel);
+//        ZipFile zipFile = new ZipFile(channel);
+        ZipStrategy zipStrategy = new ZipStrategy();
+        boolean b = zipStrategy.unCompressVolumeByRandom(new File("E:\\java\\自定义工具类\\tools\\dumplib.zip"), "E:\\Work\\dump", true, 1024, AbstractCompress.DEFAULT_BUFFER_SIZE);
+        System.out.println(b);
     }
 
     // 压缩
@@ -166,7 +169,7 @@ public class TestZipStrategy {
     @Test
     public void testCompress3() {
         ZipStrategy zipStrategy = new ZipStrategy();
-        boolean compress = zipStrategy.compress(new File("E:\\Work\\dumplib"), "dumplib.zip", 1024*1024, true);
+        boolean compress = zipStrategy.compress(new File("E:\\Work\\dumplib"), "dumplib.zip", 1024*1024, true, 1024, AbstractCompress.DEFAULT_BUFFER_SIZE);
         System.out.println(compress);
     }
 
