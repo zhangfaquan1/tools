@@ -30,12 +30,12 @@ public abstract class AbstractCacheSynchronizer {
             } finally {
                 rwl.writeLock().unlock();
             }
-        }
-        // 若缓存存在，则直接返回。
-        try {
-            data = getCache.get();
-        } finally {
-            rwl.readLock().unlock();
+
+            try {
+                data = getCache.get();
+            } finally {
+                rwl.readLock().unlock();
+            }
         }
         return data;
     }
