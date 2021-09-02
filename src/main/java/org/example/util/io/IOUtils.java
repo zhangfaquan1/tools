@@ -18,6 +18,9 @@ public class IOUtils {
 
     private static final int DEFAULT_BUFFER_SIZE = 8192;
 
+    private IOUtils() {
+    }
+
     public static boolean copyFile(String sourcePath, String destPath, boolean isByte) {
         File file = new File(sourcePath);
         if (isByte) {

@@ -3,7 +3,6 @@ package org.example.util.remote;
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
 import ch.ethz.ssh2.Session;
-import org.example.exception.ParameterException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,8 @@ public class SSHUtils {
 
     public static Connection getSSHConnection(String host, String userName, String password, int port, int retry) {
         if (StringUtils.isBlank(host) || StringUtils.isBlank(userName) || StringUtils.isBlank(password)) {
-            throw new ParameterException("host、userName 和 password 都不能为空或null!");
+            logger.error("host、userName 和 password 都不能为空或null!");
+            return null;
         }
 
         Connection connection = new Connection(host, port);
@@ -89,7 +89,8 @@ public class SSHUtils {
     public boolean downloadFile(Connection connection, String localDirPath, String remoteFilePath, int retry) {
 
         if (connection == null || StringUtils.isBlank(localDirPath) || StringUtils.isBlank(remoteFilePath)) {
-            throw new ParameterException("connection、localDirPath 和 remoteFilePath 都不能为空或null!");
+            logger.error("connection、localDirPath 和 remoteFilePath 都不能为空或null!");
+            return false;
         }
 
         boolean flag = false;
@@ -120,7 +121,8 @@ public class SSHUtils {
 
     public boolean uploadFile(Connection connection, String localFilePath, String remoteFilePath, int retry) {
         if (connection == null || StringUtils.isBlank(localFilePath) || StringUtils.isBlank(remoteFilePath)) {
-            throw new ParameterException("connection、localFilePath 和 remoteFilePath 都不能为空或null!");
+            logger.error("connection、localFilePath 和 remoteFilePath 都不能为空或null!");
+            return false;
         }
 
         boolean flag = false;
@@ -153,7 +155,8 @@ public class SSHUtils {
     public boolean exec(Connection connection, String cmd, int retry) {
 
         if (connection == null || StringUtils.isBlank(cmd)) {
-            throw new ParameterException("connection 和cmd 都不能为空或null!");
+            logger.error("connection 和cmd 都不能为空或null!");
+            return false;
         }
         boolean flag = false;
         retry = Math.max(retry, 0);
