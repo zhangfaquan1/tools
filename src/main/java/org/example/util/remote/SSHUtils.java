@@ -82,11 +82,11 @@ public class SSHUtils {
         return mark.get() ? connection : null;
     }
 
-    public boolean downloadFile(Connection connection, String localDirPath, String remoteFilePath) {
+    public static boolean downloadFile(Connection connection, String localDirPath, String remoteFilePath) {
         return downloadFile(connection, localDirPath, remoteFilePath, 0);
     }
 
-    public boolean downloadFile(Connection connection, String localDirPath, String remoteFilePath, int retry) {
+    public static boolean downloadFile(Connection connection, String localDirPath, String remoteFilePath, int retry) {
 
         if (connection == null || StringUtils.isBlank(localDirPath) || StringUtils.isBlank(remoteFilePath)) {
             logger.error("connection、localDirPath 和 remoteFilePath 都不能为空或null!");
@@ -115,11 +115,11 @@ public class SSHUtils {
         return flag;
     }
 
-    public boolean uploadFile(Connection connection, String localFilePath, String remoteFilePath) {
-        return uploadFile(connection, localFilePath, remoteFilePath);
+    public static boolean uploadFile(Connection connection, String localFilePath, String remoteFilePath) {
+        return uploadFile(connection, localFilePath, remoteFilePath, 2);
     }
 
-    public boolean uploadFile(Connection connection, String localFilePath, String remoteFilePath, int retry) {
+    public static boolean uploadFile(Connection connection, String localFilePath, String remoteFilePath, int retry) {
         if (connection == null || StringUtils.isBlank(localFilePath) || StringUtils.isBlank(remoteFilePath)) {
             logger.error("connection、localFilePath 和 remoteFilePath 都不能为空或null!");
             return false;
@@ -148,11 +148,11 @@ public class SSHUtils {
         return flag;
     }
 
-    public boolean exec(Connection connection, String cmd) {
+    public static boolean exec(Connection connection, String cmd) {
         return exec(connection, cmd, 0);
     }
 
-    public boolean exec(Connection connection, String cmd, int retry) {
+    public static boolean exec(Connection connection, String cmd, int retry) {
 
         if (connection == null || StringUtils.isBlank(cmd)) {
             logger.error("connection 和cmd 都不能为空或null!");
@@ -175,7 +175,7 @@ public class SSHUtils {
         return flag;
     }
 
-    public void close(Connection connection) {
+    public static void close(Connection connection) {
         if (connection != null) {
             connection.close();
         }

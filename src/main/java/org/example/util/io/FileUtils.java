@@ -167,15 +167,20 @@ public class FileUtils {
      * @param file 文件对象
      * @return boolean
      */
-    public static boolean createFile(File file) throws IOException {
+    public static boolean createFile(File file) {
         File parentFile = file.getParentFile();
         boolean flag = true;
         if (file.exists())
-            return false;
+            return true;
         else if (!parentFile.exists())
-            flag = parentFile.mkdirs();
-        if (flag)
-            flag = file.createNewFile();
+            flag = mkdirs(parentFile);
+        if (flag) {
+            try {
+                flag = file.createNewFile();
+            } catch (IOException e) {
+                logger.error("创建文件{}失败。", file, e);
+            }
+        }
         return flag;
     }
 
