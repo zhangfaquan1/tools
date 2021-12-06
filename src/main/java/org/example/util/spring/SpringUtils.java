@@ -21,11 +21,11 @@ public class SpringUtils implements ApplicationContextAware {
         return getApplicationContext().getBean(name);
     }
 
-    public static <T> T getBan(Class<T> clazz) {
+    public static <T> T getBean(Class<T> clazz) {
         return getApplicationContext().getBean(clazz);
     }
 
-    public static <T> T getBan(String name, Class<T> clazz) {
+    public static <T> T getBean(String name, Class<T> clazz) {
         return getApplicationContext().getBean(name, clazz);
     }
 }
