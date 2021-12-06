@@ -221,6 +221,19 @@ public class IOUtils {
         return bufferedInputStream;
     }
 
+    public static BufferedReader getBufferedReader(File file) {
+        if (file == null)
+            return null;
+
+        BufferedReader bufferedReader = null;
+        try {
+            bufferedReader = new BufferedReader(new FileReader(file));
+        } catch (IOException e) {
+            logger.error("指定的目标路径非法。路径：{}", file.getPath(), e);
+        }
+        return bufferedReader;
+    }
+
     public static BufferedWriter getBufferedWriter(File file) {
         if (file == null)
             return null;
